@@ -148,6 +148,19 @@ for _, door in ipairs(door_list) do
 				mesh = mesh .. v .. ".obj"
 			})
 		end
+
+	local nn_a = "doors:homedecor_"..door.name.."_a"
+	local nn_b = "doors:homedecor_"..door.name.."_b"
+
+	if door.alpha then
+		local def = table.copy(core.registered_nodes[nn_a])
+			def.use_texture_alpha = "blend"
+			def.mesh = "door_a.obj" -- leaving this out will break the _a model
+			core.register_node(":"..nn_a, def) -- assignment when the override takes place
+
+		def = table.copy(core.registered_nodes[nn_b])
+			def.use_texture_alpha = "blend"
+			core.register_node(":"..nn_b, def)
 	end
 
 	--compatibility
