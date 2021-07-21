@@ -32,9 +32,20 @@ local kbed_cbox = {
 	}
 }
 
+local beds_compat = {
+	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
+		return itemstack
+	end,
+}
 
 local bed_def = minetest.registered_nodes["beds:bed"]
 local bed_on_rightclick = bed_def and bed_def.on_rightclick or nil
+if bed_def then
+	if bed_def.on_rightclick then
+		beds_compat.on_rightclick = bed_def.on_rightclick
+	end
+	beds_compat.transforms = bed_def.transforms
+end
 
 homedecor.register("bed_regular", {
 	mesh = "homedecor_bed_regular.obj",
@@ -72,10 +83,11 @@ homedecor.register("bed_regular", {
 		if itemname == "homedecor:bed_regular" then
 			homedecor.bed_expansion(pos, clicker, itemstack, pointed_thing, true)
 		elseif bed_on_rightclick then
-			bed_on_rightclick(pos, node, clicker)
+			beds_compat.on_rightclick(pos, node, clicker, itemstack, pointed_thing)
 		end
 		return itemstack
 	end,
+	transforms = beds_compat.transforms,
 	crafts = {
 		{
 			recipe = {
@@ -113,11 +125,12 @@ homedecor.register("bed_extended", {
 	on_dig = unifieddyes.on_dig,
 	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
 		if bed_on_rightclick then
-			bed_on_rightclick(pos, node, clicker)
+			beds_compat.on_rightclick(pos, node, clicker, itemstack, pointed_thing)
 		end
 		return itemstack
 	end,
-	drop = "homedecor:bed_regular"
+	drop = "homedecor:bed_regular",
+	transforms = beds_compat.transforms,
 })
 
 homedecor.register("bed_kingsize", {
@@ -154,10 +167,11 @@ homedecor.register("bed_kingsize", {
 	on_dig = unifieddyes.on_dig,
 	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
 		if bed_on_rightclick then
-			bed_on_rightclick(pos, node, clicker)
+			beds_compat.on_rightclick(pos, node, clicker, itemstack, pointed_thing)
 		end
 		return itemstack
 	end,
+	transforms = beds_compat.transforms,
 	crafts = {
 		{
 			recipe = {
